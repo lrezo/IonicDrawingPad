@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Device } from '@capacitor/device';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Toast } from '@capacitor/toast';
 @Injectable({
   providedIn: 'root',
 })
@@ -27,5 +29,16 @@ export class DrawingService {
       directory: this.directory,
       data: imageBase64Png,
     });
+  }
+  async showMessage(message: string) {
+    const info = await Device.getInfo();
+    if (info.platform === 'android' || info.platform === 'ios') {
+      await Toast.show({
+        text: message,
+        duration: 'short',
+      });
+    } else {
+      alert(message);
+    }
   }
 }

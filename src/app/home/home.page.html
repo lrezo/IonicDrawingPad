@@ -33,7 +33,7 @@
           placeholder="Select the folder"
           toggleIcon="add"
           aria-label="Folder"
-          (ionChange)="selectedFolder($event)"
+          [(ngModel)]="directory"
         >
           <ion-select-option value="Documents">Documents</ion-select-option>
           <ion-select-option value="Data">App Data</ion-select-option>
@@ -43,12 +43,17 @@
         <ion-label position="stacked">Base filename</ion-label>
         <ion-input
           placeholder="e.g. my_drawing"
-          (ionChange)="filenameInputChanged($event)"
+          [(ngModel)]="fileBaseName"
         ></ion-input>
       </ion-item>
     </div>
 
-    <ion-button (click)="startDrawing()" fill="outline" expand="block" class="ion-margin-top">
+    <ion-button
+      (click)="startDrawing()"
+      fill="outline"
+      expand="block"
+      class="ion-margin-top"
+    >
       Start Drawing
     </ion-button>
   </div>
