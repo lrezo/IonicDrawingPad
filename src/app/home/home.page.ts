@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { NgModel } from '@angular/forms';
+import { Directory } from '@capacitor/filesystem';
+
 import {
   IonHeader,
   IonToolbar,
@@ -13,6 +15,8 @@ import {
   IonInput,
   IonButton,
 } from '@ionic/angular/standalone';
+import { DrawingService } from '../drawing-service';
+import { Route, Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -35,7 +39,7 @@ import {
 export class HomePage {
   directory!: string;
   fileBaseName!: string;
-  constructor() {}
+  constructor(private drawingService: DrawingService, private router: Router) {}
 
   selectedFolder(event: CustomEvent) {
     this.directory = event.detail.value;
@@ -43,5 +47,12 @@ export class HomePage {
   filenameInputChanged(event: CustomEvent) {
     console.log(event.detail.value);
     console.log(this.fileBaseName);
+  }
+
+  startDrawing() {
+    const dir =
+      this.directory === 'Documents' ? Directory.Documents : Directory.Data;
+    this.drawingService.setDestination(dir, this.fileBaseName);
+    this.router.navigate(['/draw']);
   }
 }
