@@ -1,0 +1,7 @@
+{
+  "name": "IonicDrawingPad",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
