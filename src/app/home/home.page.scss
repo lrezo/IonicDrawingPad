@@ -9,16 +9,31 @@
   justify-content: center;
   justify-items: start;
   gap: 2rem;
-  height: 100%;
+  height: 80%;
   border: solid 1px lightgray;
   text-align: center;
   padding: 1rem;
   border-radius: 10px;
+  box-shadow: 0 0 0 0 inset;
 }
 #container div {
   width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+#container .ion-item {
+  display: flex;
+  flex-direction: column;
 }
 
+#dirselector .ion-item {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 3rem;
+}
 #container strong {
   font-size: 20px;
   line-height: 26px;
@@ -35,4 +50,9 @@
 
 #container a {
   text-decoration: none;
+}
+.item-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-wrap: wrap;
 }

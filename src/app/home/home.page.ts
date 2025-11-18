@@ -43,7 +43,7 @@ import { DrawingService } from '../drawing-service';
 })
 export class HomePage {
   directory: 'Documents' | 'Data' = 'Documents';
-  fileBaseName: string = 'drawing';
+  fileBaseName!: string;
 
   constructor(private drawingService: DrawingService, private router: Router) {}
 

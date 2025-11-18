@@ -7,7 +7,7 @@ import { Toast } from '@capacitor/toast';
 })
 export class DrawingService {
   directory: Directory = Directory.Documents;
-  fileBaseName: String = `drawing`;
+  fileBaseName!: string;
 
   setDestination(dir: Directory, fileName: string) {
     this.directory = dir;

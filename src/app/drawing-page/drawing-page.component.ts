@@ -41,7 +41,7 @@ export class DrawingPageComponent implements AfterViewInit {
   private ctx: CanvasRenderingContext2D | null = null;
   private drawing = false;
 
-  color = '#ffffff';
+  color = this.getCssVar('--ion-text-color');
   size = 5;
 
   constructor(private drawingService: DrawingService) {}
@@ -80,11 +80,18 @@ export class DrawingPageComponent implements AfterViewInit {
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
     this.ctx.lineWidth = this.size;
-    this.ctx.fillStyle = '#000000';
+    const content = document.querySelector('ion-content');
+    const bg = getComputedStyle(content!).getPropertyValue('background-color');
+    this.ctx.fillStyle = bg;
     this.ctx.fillRect(0, 0, width, height);
   }
 
   // --- helpers ---
+  getCssVar(name: string): string {
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue(name)
+      .trim();
+  }
 
   private getPos(
     event: MouseEvent | TouchEvent
@@ -151,7 +158,9 @@ export class DrawingPageComponent implements AfterViewInit {
   clearCanvas(): void {
     if (!this.ctx) return;
     const canvas = this.canvasRef.nativeElement;
-    this.ctx.fillStyle = '#000000';
+    const content = document.querySelector('ion-content');
+    const bg = getComputedStyle(content!).getPropertyValue('background-color');
+    this.ctx.fillStyle = bg;
     this.ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
