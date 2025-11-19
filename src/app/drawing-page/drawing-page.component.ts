@@ -41,8 +41,9 @@ export class DrawingPageComponent implements AfterViewInit {
   private ctx: CanvasRenderingContext2D | null = null;
   private drawing = false;
 
-  color = this.getCssVar('--ion-text-color');
+  color = '#000000';
   size = 5;
+  private canvasBgColor = '#ffffff';
 
   constructor(private drawingService: DrawingService) {}
 
@@ -80,17 +81,29 @@ export class DrawingPageComponent implements AfterViewInit {
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
     this.ctx.lineWidth = this.size;
-    const content = document.querySelector('ion-content');
-    const bg = getComputedStyle(content!).getPropertyValue('background-color');
-    this.ctx.fillStyle = bg;
+
+    this.canvasBgColor = this.getCssVar('--ion-background-color', '#ffffff');
+    this.color = this.getCssVar('--ion-text-color', '#000000');
+
+    this.ctx.fillStyle = this.canvasBgColor;
     this.ctx.fillRect(0, 0, width, height);
   }
 
   // --- helpers ---
-  getCssVar(name: string): string {
-    return getComputedStyle(document.documentElement)
+  private getCssVar(name: string, fallback: string): string {
+    // Try on <html>
+    const fromRoot = getComputedStyle(document.documentElement)
       .getPropertyValue(name)
       .trim();
+
+    if (fromRoot) return fromRoot;
+
+    // Try on <body> (Ionic sometimes sets vars here)
+    const fromBody = getComputedStyle(document.body)
+      .getPropertyValue(name)
+      .trim();
+
+    return fromBody || fallback;
   }
 
   private getPos(
@@ -116,8 +129,6 @@ export class DrawingPageComponent implements AfterViewInit {
       y: touch.clientY - rect.top,
     };
   }
-
-  // --- drawing events ---
 
   startDrawing(event: MouseEvent | TouchEvent): void {
     event.preventDefault();
@@ -158,9 +169,11 @@ export class DrawingPageComponent implements AfterViewInit {
   clearCanvas(): void {
     if (!this.ctx) return;
     const canvas = this.canvasRef.nativeElement;
-    const content = document.querySelector('ion-content');
-    const bg = getComputedStyle(content!).getPropertyValue('background-color');
-    this.ctx.fillStyle = bg;
+    this.canvasBgColor = this.getCssVar(
+      '--ion-background-color',
+      this.canvasBgColor
+    );
+    this.ctx.fillStyle = this.canvasBgColor;
     this.ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
