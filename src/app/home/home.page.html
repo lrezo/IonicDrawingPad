@@ -33,10 +33,11 @@
           placeholder="Select the destination folder"
           toggleIcon="add"
           aria-label="Folder"
-          [(ngModel)]="directory"
+          [(ngModel)]="selectedFolder"
         >
           <ion-select-option value="Documents">Documents</ion-select-option>
-          <ion-select-option value="Data">App Data</ion-select-option>
+          <ion-select-option value="pictures">Pictures</ion-select-option>
+          <ion-select-option value="downloads">Downloads</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item>

@@ -42,18 +42,14 @@ import { DrawingService } from '../drawing-service';
   ],
 })
 export class HomePage {
-  directory: 'Documents' | 'Data' = 'Documents';
+  selectedFolder: 'documents' | 'pictures' | 'downloads' = 'documents';
   fileBaseName!: string;
 
   constructor(private drawingService: DrawingService, private router: Router) {}
 
   startDrawing(): void {
-    const dir =
-      this.directory === 'Documents' ? Directory.Documents : Directory.Data;
-
-    this.drawingService.setDestination(dir, this.fileBaseName);
-    this.router.navigate(['/draw']); // adapt to your route
-    console.log(this.fileBaseName);
-    console.log(this.directory);
+    this.drawingService.fileBaseName = this.fileBaseName;
+    this.drawingService.setDestination(this.selectedFolder);
+    this.router.navigate(['/draw']);
   }
 }
