@@ -7,21 +7,6 @@
 </ion-header>
 
 <ion-content>
-  <div class="canvas-container">
-    <canvas
-      #canvas
-      (mousedown)="startDrawing($event)"
-      (mousemove)="draw($event)"
-      (mouseup)="endDrawing()"
-      (mouseleave)="endDrawing()"
-      (touchstart)="startDrawing($event)"
-      (touchmove)="draw($event)"
-      (touchend)="endDrawing()"
-    ></canvas>
-  </div>
-</ion-content>
-
-<ion-footer>
   <ion-toolbar>
     <!-- Left: Clear -->
     <ion-buttons slot="start">
@@ -46,4 +31,16 @@
       <ion-button color="primary" (click)="save()">Save</ion-button>
     </ion-buttons>
   </ion-toolbar>
-</ion-footer>
+  <div class="canvas-container">
+    <canvas
+      #canvas
+      (mousedown)="startDrawing($event)"
+      (mousemove)="draw($event)"
+      (mouseup)="endDrawing()"
+      (mouseleave)="endDrawing()"
+      (touchstart)="startDrawing($event)"
+      (touchmove)="draw($event)"
+      (touchend)="endDrawing()"
+    ></canvas>
+  </div>
+</ion-content>

@@ -22,8 +22,7 @@ export class DrawingService {
 
   async SaveDrawing(imageBase64Png: string): Promise<void> {
     await this.requestAndroidPermissions();
-    const timeStamp = new Date().getTime();
-    const fileName = `${this.fileBaseName}_${timeStamp}.png`;
+    const fileName = `${this.fileBaseName}_${this.formatDateNow()}.png`;
     if (Capacitor.getPlatform() === 'android') {
       if (this.folder === 'pictures') {
         await Filesystem.writeFile({
@@ -48,6 +47,7 @@ export class DrawingService {
         directory: Directory.Documents,
         data: imageBase64Png,
       });
+      await this.showMessage('Image saved');
     }
     if (Capacitor.getPlatform() === 'ios') {
       await Filesystem.writeFile({
@@ -55,16 +55,24 @@ export class DrawingService {
         directory: Directory.Documents,
         data: imageBase64Png,
       });
+      await this.showMessage('Image saved');
     }
-    //return this.saveWithPicker(imageBase64Png);
+    if (Capacitor.getPlatform() === 'web') {
+      await this.saveWithPicker(fileName, imageBase64Png); // it works will all the browwser but not mozilla
+      await this.showMessage('Image saved');
+    }
   }
   async showMessage(message: string) {
-    const info = await Device.getInfo();
-    if (info.platform === 'android' || info.platform === 'ios') {
-      await Toast.show({
-        text: message,
-        duration: 'short',
-      });
+    const info = Capacitor.getPlatform();
+    if (info === 'android' || info === 'ios') {
+      try {
+        await Toast.show({
+          text: message,
+          duration: 'short',
+        });
+      } catch {
+        alert(message);
+      }
     } else {
       alert(message);
     }
@@ -85,13 +93,12 @@ export class DrawingService {
     console.log('Permission request result:', result);
   }
 
-  async saveWithPicker(base64: string) {
+  async saveWithPicker(fileName: string, base64: string) {
     //@ts-ignore
     const dirHandle = await window.showDirectoryPicker();
-    const fileHandle = await dirHandle.getFileHandle(
-      `drawing_${Date.now()}.png`,
-      { create: true }
-    );
+    const fileHandle = await dirHandle.getFileHandle(fileName, {
+      create: true,
+    });
     const writable = await fileHandle.createWritable();
 
     const binary = atob(base64);
@@ -100,5 +107,16 @@ export class DrawingService {
 
     await writable.write(buffer);
     await writable.close();
+  }
+  formatDateNow(): string {
+    const now = new Date();
+
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+
+    return `${day}-${month}-${year}Date ${hour}-${minute}Time`;
   }
 }

@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title style="text-align: center"> Ionic Drawing Pad </ion-title>
+    <ion-title style="text-align: center"> Drawing Pad </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,23 +14,26 @@
   <div id="container" class="">
     <div>
       <ion-text color="primary">
-        <h2>Hello!</h2>
+        <h2>Welcome</h2>
       </ion-text>
       <ion-text color="medium">
-        <p>
-          This is the welcome page. Choose where to save your drawing and then
-          start drawing.
-        </p>
+        <p>Choose where to save your drawing and then start drawing.</p>
       </ion-text>
     </div>
     <div #dirselector>
-      <ion-item style="display: flex; flex-direction: column; flex-wrap: wrap">
+      @if (!isWindowsPlatform) {
+      <ion-item
+        style="
+          display: flex;
+          flex-direction: column;
+          flex-wrap: wrap !important;
+        "
+      >
         <ion-label aria-label="primary input" color="primary"
-          >Destination Folder</ion-label
+          >Select the destination folder</ion-label
         >
         <ion-select
           interface="popover"
-          placeholder="Select the destination folder"
           toggleIcon="add"
           aria-label="Folder"
           [(ngModel)]="selectedFolder"
@@ -40,6 +43,8 @@
           <ion-select-option value="downloads">Downloads</ion-select-option>
         </ion-select>
       </ion-item>
+      }
+
       <ion-item>
         <ion-label position="stacked">Name of your canvas</ion-label>
         <ion-input

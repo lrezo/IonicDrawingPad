@@ -19,6 +19,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { DrawingService } from '../drawing-service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-home',
@@ -44,12 +45,17 @@ import { DrawingService } from '../drawing-service';
 export class HomePage {
   selectedFolder: 'documents' | 'pictures' | 'downloads' = 'documents';
   fileBaseName!: string;
-
+  isWindowsPlatform: boolean = false;
   constructor(private drawingService: DrawingService, private router: Router) {}
 
   startDrawing(): void {
     this.drawingService.fileBaseName = this.fileBaseName;
     this.drawingService.setDestination(this.selectedFolder);
     this.router.navigate(['/draw']);
+  }
+  ngOnInit() {
+    if (Capacitor.getPlatform() === 'web') {
+      this.isWindowsPlatform = true;
+    }
   }
 }

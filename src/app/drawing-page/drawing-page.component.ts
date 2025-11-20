@@ -31,7 +31,6 @@ import { Toast } from '@capacitor/toast';
     IonButton,
     IonButtons,
     IonBackButton,
-    IonFooter,
   ],
 })
 export class DrawingPageComponent implements AfterViewInit {
@@ -198,7 +197,6 @@ export class DrawingPageComponent implements AfterViewInit {
     const dataUrl = canvas.toDataURL('image/png');
     const base64 = dataUrl.split(',')[1];
 
-    await this.drawingService.SaveDrawing(base64); // use your method name
-    this.drawingService.showMessage('Image sucessfly saved');
+    await this.drawingService.SaveDrawing(base64);
   }
 }
