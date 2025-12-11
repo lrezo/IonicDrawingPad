@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -43,10 +43,29 @@ import { Capacitor } from '@capacitor/core';
   ],
 })
 export class HomePage {
+  reply = '';
+  electronVersion = '';
+
   selectedFolder: 'documents' | 'pictures' | 'downloads' = 'documents';
   fileBaseName!: string;
   isWindowsPlatform: boolean = false;
-  constructor(private drawingService: DrawingService, private router: Router) {}
+  constructor(
+    private ngZone: NgZone,
+    private drawingService: DrawingService,
+    private router: Router
+  ) {
+    this.electronVersion = window.api.getElectronVersion();
+    window.api.ipcSendToMain();
+    window.api.ipcReceiveReplyFromMain(
+      'do-a-thing-reply',
+      (event: any, arg: any) => {
+        console.log('Received reply from main process:', arg);
+        this.ngZone.run(() => {
+          this.reply = arg;
+        });
+      }
+    );
+  }
 
   startDrawing(): void {
     this.drawingService.fileBaseName = this.fileBaseName;
