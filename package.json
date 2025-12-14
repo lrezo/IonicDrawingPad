@@ -10,7 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "run:electron": "ionic cap copy && electron electronmain"
+    "elec": "ionic cap copy && electron electronmain"
   },
   "private": true,
   "dependencies": {
