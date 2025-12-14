@@ -22,9 +22,18 @@ const createWindow = () => {
     icon: __dirname + "/www/assets/icon/favicon.png",
   });
   mainWindow.removeMenu();
+  const isDev = !app.isPackaged;
+  function getIndexPath() {
+    if (isDev) {
+      // during dev: project folder
+      return "../www/index.html";
+    }
+    // after install: Electron copies resources under process.resourcesPath
+    return "./www/index.html";
+  }
 
   // and load the index.html of the app.
-  mainWindow.loadFile("../www/index.html"); // IMPORTANT: points to Ionic build
+  mainWindow.loadFile(getIndexPath()); // IMPORTANT: points to Ionic build
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
   mainWindow.webContents.on("will-navigate", (event, url) => {
     // Only allow local file navigation
