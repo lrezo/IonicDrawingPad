@@ -54,7 +54,7 @@ export class HomePage {
     private drawingService: DrawingService,
     private router: Router
   ) {
-    this.electronVersion = window.api.getElectronVersion();
+    /*this.electronVersion = window.api.getElectronVersion();
     window.api.ipcSendToMain();
     window.api.ipcReceiveReplyFromMain(
       'do-a-thing-reply',
@@ -64,7 +64,7 @@ export class HomePage {
           this.reply = arg;
         });
       }
-    );
+    );*/
   }
 
   startDrawing(): void {

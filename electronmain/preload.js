@@ -2,8 +2,8 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("api", {
-  ipcSendToMain: () => {
-    ipcRenderer.send("do-a-thing");
+  /*ipcSendToMain: () => {
+    //ipcRenderer.send("do-a-thing");
   },
   ipcReceiveReplyFromMain: (channel, listener) => {
     ipcRenderer.on(channel, listener);
@@ -13,6 +13,9 @@ contextBridge.exposeInMainWorld("api", {
   },
   getElectronVersion: () => {
     return process.versions.electron; // also possible 'node' or 'chrome'
+  },*/
+  saveImage: async (bytes, fileName) => {
+    return await ipcRenderer.invoke("save-image", { bytes, fileName });
   },
 });
 

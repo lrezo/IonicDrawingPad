@@ -3,6 +3,7 @@ import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Toast } from '@capacitor/toast';
+import { isElectron } from './core/platform';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,20 @@ import { Toast } from '@capacitor/toast';
 export class DrawingService {
   folder: 'documents' | 'pictures' | 'downloads' = 'documents';
   fileBaseName!: string;
+  pickerOpen: boolean = false;
+
+  private formatDateForFilename(date = new Date()): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+
+    return (
+      `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+        date.getDate()
+      )}` +
+      `_T${pad(date.getHours())}-${pad(date.getMinutes())}-${pad(
+        date.getSeconds()
+      )}`
+    );
+  }
 
   setDestination(folder: 'documents' | 'pictures' | 'downloads') {
     this.folder = folder;
@@ -22,7 +37,8 @@ export class DrawingService {
 
   async SaveDrawing(imageBase64Png: string): Promise<void> {
     await this.requestAndroidPermissions();
-    const fileName = `${this.fileBaseName}_${this.formatDateNow()}.png`;
+    const safeBaseName = this.fileBaseName?.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const fileName = `${safeBaseName}_${this.formatDateForFilename()}.png`;
     if (Capacitor.getPlatform() === 'android') {
       if (this.folder === 'pictures') {
         await Filesystem.writeFile({
@@ -59,7 +75,7 @@ export class DrawingService {
     }
     if (Capacitor.getPlatform() === 'web') {
       await this.saveWithPicker(fileName, imageBase64Png); // it works will all the browwser but not mozilla
-      await this.showMessage('Image saved');
+      //await this.showMessage('Image saved');
     }
   }
   async showMessage(message: string) {
@@ -94,19 +110,46 @@ export class DrawingService {
   }
 
   async saveWithPicker(fileName: string, base64: string) {
-    //@ts-ignore
-    const dirHandle = await window.showDirectoryPicker();
-    const fileHandle = await dirHandle.getFileHandle(fileName, {
-      create: true,
-    });
-    const writable = await fileHandle.createWritable();
+    const api = (window as any).api;
+    //console.log('isElectron:', isElectron());
+    //console.log(fileName);
+    if (api?.saveImage && isElectron()) {
+      const binary = atob(base64);
+      const buffer = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) buffer[i] = binary.charCodeAt(i);
 
-    const binary = atob(base64);
-    const buffer = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) buffer[i] = binary.charCodeAt(i);
+      const result = await api.saveImage(buffer, fileName);
 
-    await writable.write(buffer);
-    await writable.close();
+      if (!result?.success) {
+        console.warn('Save canceled or failed', result?.error);
+        await this.showMessage('Image save failed');
+        return;
+      }
+
+      //console.log('Saved to:', result.path);
+      await this.showMessage('Image saved');
+      return;
+    }
+    if (this.pickerOpen) return;
+    this.pickerOpen = true;
+    try {
+      //@ts-ignore
+      const dirHandle = await window.showDirectoryPicker();
+      const fileHandle = await dirHandle.getFileHandle(fileName, {
+        create: true,
+      });
+      const writable = await fileHandle.createWritable();
+
+      const binary = atob(base64);
+      const buffer = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) buffer[i] = binary.charCodeAt(i);
+
+      await writable.write(buffer);
+      await writable.close();
+      await this.showMessage('Image saved');
+    } finally {
+      this.pickerOpen = false;
+    }
   }
   formatDateNow(): string {
     const now = new Date();
