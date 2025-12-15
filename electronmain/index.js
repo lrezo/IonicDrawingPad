@@ -19,7 +19,6 @@ const createWindow = () => {
       sandbox: true,
       webSecurity: true,
     },
-    icon: __dirname + "/www/assets/icon/favicon.png",
   });
   mainWindow.removeMenu();
   const isDev = !app.isPackaged;
