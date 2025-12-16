@@ -23,12 +23,7 @@ const createWindow = () => {
   mainWindow.removeMenu();
   const isDev = !app.isPackaged;
   function getIndexPath() {
-    if (isDev) {
-      // during dev: project folder
-      return "../www/index.html";
-    }
-    // after install: Electron copies resources under process.resourcesPath
-    return "./www/index.html";
+    return isDev ? "./www/index.html" : "../www/index.html";
   }
 
   // and load the index.html of the app.
